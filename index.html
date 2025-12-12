@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docx2Epub PWA</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>📘</text></svg>" />
+</head>
+<body>
+  <div class="container">
+    <h1>Docx → EPUB (PWA + Mammoth.js)</h1>
+
+    <div id="dropArea" class="drop-area">
+      <input type="file" id="fileInput" accept=".docx" />
+      <p>Glissez-déposez un fichier .docx ici</p>
+      <p>ou <label for="fileInput">cliquez pour sélectionner</label></p>
+    </div>
+
+    <div id="options" class="options">
+      <h3>Informations EPUB</h3>
+      <input
+        type="text"
+        id="titleInput"
+        placeholder="Titre du livre"
+        required
+      />
+      <input
+        type="text"
+        id="authorInput"
+        placeholder="Auteur"
+        required
+      />
+      <button id="convertBtn">Convertir en EPUB</button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <a id="downloadLink" class="download-link" style="display:none">
+      Télécharger EPUB
+    </a>
+  </div>
+
+  <!-- Bibliothèques CDN (Mammoth, JSZip, EpubGen) -->
+  <script src="https://unpkg.com/mammoth@1/dist/mammoth.browser.min.js"></script>
+  <script src="https://unpkg.com/jszip@3/dist/jszip.min.js"></script>
+  <script src="https://unpkg.com/epub-gen@0.1/dist/epub-gen.umd.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
