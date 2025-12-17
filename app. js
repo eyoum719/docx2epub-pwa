@@ -1,0 +1,86 @@
+// Variables
+const docxFileInput = document.getElementById('docxFile');
+const convertBtn = document.getElementById('convertBtn');
+const statusDiv = document.getElementById('status');
+const downloadLink = document.getElementById('downloadLink');
+
+// Librairies CDN (évite d'installer des paquets sur mobile)
+const mammothCDN = 'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js';
+const epubGenCDN = 'https://cdn.jsdelivr.net/npm/epub-gen@0.1.19/dist/epub-gen.browser.min.js';
+
+// Chargement des librairies
+let mammoth, EpubGen;
+async function loadLibraries() {
+    statusDiv.textContent = "Chargement des outils de conversion...";
+    try {
+        // Charger Mammoth
+        const mammothScript = document.createElement('script');
+        mammothScript.src = mammothCDN;
+        document.head.appendChild(mammothScript);
+        mammothScript.onload = () => mammoth = window.mammoth;
+
+        // Charger EpubGen
+        const epubGenScript = document.createElement('script');
+        epubGenScript.src = epubGenCDN;
+        document.head.appendChild(epubGenScript);
+        epubGenScript.onload = () => EpubGen = window.EpubGen;
+
+        statusDiv.textContent = "Prêt à convertir !";
+    } catch (err) {
+        statusDiv.textContent = "Erreur de chargement : " + err.message;
+    }
+}
+
+// Conversion DOCX → EPUB
+convertBtn.addEventListener('click', async () => {
+    const file = docxFileInput.files[0];
+    if (!file) {
+        statusDiv.textContent = "Veuillez sélectionner un fichier DOCX !";
+        return;
+    }
+
+    if (!file.name.endsWith('.docx')) {
+        statusDiv.textContent = "Le fichier doit être au format DOCX !";
+        return;
+    }
+
+    statusDiv.textContent = "Conversion en cours...";
+    try {
+        // Lire le DOCX avec Mammoth
+        const arrayBuffer = await readFileAsArrayBuffer(file);
+        const result = await mammoth.convertToHtml({ arrayBuffer });
+        const htmlContent = result.value;
+
+        // Générer l'EPUB
+        const epubOptions = {
+            title: "Ebook converti - Healthy Juice & Dreams",
+            author: "Eric Daniel Cédric Jackson Eyoum",
+            content: [{ html: htmlContent }]
+        };
+
+        const epubBlob = await EpubGen.generateEpub(epubOptions);
+        const epubUrl = URL.createObjectURL(epubBlob);
+
+        // Afficher le lien de téléchargement
+        downloadLink.href = epubUrl;
+        downloadLink.download = file.name.replace('.docx', '.epub');
+        downloadLink.style.display = "block";
+
+        statusDiv.textContent = "Conversion terminée !";
+    } catch (err) {
+        statusDiv.textContent = "Erreur : " + err.message;
+    }
+});
+
+// Helper : lire le fichier en ArrayBuffer
+function readFileAsArrayBuffer(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// Initialisation
+window.onload = loadLibraries;
