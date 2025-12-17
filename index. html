@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docx to Epub | Healthy Juice & Dreams</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2ecc71">
+    <!-- Icône pour mobile -->
+    <link rel="icon" href="icons/icon-192x192.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <h1>Convertisseur DOCX → EPUB</h1>
+        <p>Pour votre ebook sur l'analyse des rêves 📚</p>
+        <input type="file" id="docxFile" accept=".docx" class="file-input">
+        <button id="convertBtn" class="convert-btn">Convertir en EPUB</button>
+        <div id="status" class="status"></div>
+        <a id="downloadLink" class="download-link" style="display: none;">Télécharger l'EPUB</a>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Enregistrement du service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('SW enregistré:', reg))
+                    .catch(err => console.log('Erreur SW:', err));
+            });
+        }
+    </script>
+</body>
+</html>
